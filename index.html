@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phnom Penh Mystery Bar Crawl</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0d0f12;
+      --card-bg: #161a22;
+      --card-border: #232936;
+      --accent-pink: #ff2a85;
+      --accent-lime: #00ffaa;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      padding: 70px 16px 40px 16px;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Fixed Top Progress Tracker */
+    .tracker-sticky {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(22, 26, 34, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 20px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tracker-text {
+      font-size: 0.8rem;
+      color: var(--accent-lime);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #282f3f;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: var(--accent-pink);
+      box-shadow: 0 0 10px rgba(255, 42, 133, 0.8);
+      transform: scale(1.3);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 10px;
+    }
+
+    .subtitle {
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--accent-lime);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      scroll-margin-top: 80px;
+    }
+
+    .card-home {
+      background: linear-gradient(135deg, #161a22 0%, #1e261f 100%);
+      border: 1px solid #00b14f;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .stop-tag {
+      background: rgba(255, 42, 133, 0.15);
+      color: var(--accent-pink);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .home-tag {
+      background: rgba(0, 177, 79, 0.15);
+      color: #00ffaa;
+    }
+
+    .location-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .clue-box {
+      background: #0f1218;
+      border-left: 3px solid var(--accent-lime);
+      padding: 14px;
+      border-radius: 0 12px 12px 0;
+      margin: 12px 0;
+      font-size: 0.95rem;
+    }
+
+    ul.steps {
+      list-style: none;
+      margin: 12px 0;
+    }
+
+    ul.steps li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    ul.steps li::before {
+      content: "➔";
+      position: absolute;
+      left: 0;
+      color: var(--accent-pink);
+    }
+
+    /* 2x2 Grid for Stop 6 Options */
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .grid-btn {
+      background: #0f1218;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 10px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .grid-btn:hover, .grid-btn:active {
+      border-color: var(--accent-lime);
+      background: #181e28;
+      transform: translateY(-2px);
+    }
+
+    .grid-btn span {
+      font-size: 1.6rem;
+    }
+
+    .grab-box {
+      background: #0f1218;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid #00b14f;
+      margin-top: 14px;
+      text-align: center;
+      display: none;
+    }
+
+    .grab-box.open {
+      display: block;
+    }
+
+    /* Photo Container & Zoomable Image */
+    .photo-container {
+      margin: 12px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      cursor: pointer;
+      position: relative;
+      background: #1e2430;
+      min-height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-container img {
+      width: 100%;
+      display: block;
+      transition: transform 0.2s ease;
+    }
+
+    .photo-container:hover img {
+      transform: scale(1.02);
+    }
+
+    .photo-caption {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 700;
+      text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s ease;
+      margin-top: 10px;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-reveal {
+      background: #252c3a;
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-action {
+      background: var(--accent-pink);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 42, 133, 0.3);
+    }
+
+    .btn-grab {
+      background: #00b14f;
+      color: #fff;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 15px rgba(0, 177, 79, 0.4);
+    }
+
+    .answer-reveal {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #0f1218;
+      border-radius: 12px;
+      border: 1px solid var(--accent-lime);
+      text-align: center;
+    }
+
+    .answer-reveal.open {
+      display: block;
+    }
+
+    .revealed-bar-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      color: var(--accent-lime);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .formula {
+      background: #161a22;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--accent-lime);
+      margin: 8px 0;
+      text-align: left;
+    }
+
+    /* Lightbox Modal */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--accent-pink);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY PROGRESS TRACKER -->
+  <div class="tracker-sticky">
+    <span class="tracker-text">PROGRESS</span>
+    <div class="progress-dots">
+      <div class="dot active" id="dot-1"></div>
+      <div class="dot" id="dot-2"></div>
+      <div class="dot" id="dot-3"></div>
+      <div class="dot" id="dot-4"></div>
+      <div class="dot" id="dot-5"></div>
+      <div class="dot" id="dot-6"></div>
+    </div>
+  </div>
+
+  <header>
+    <div class="subtitle">Phnom Penh Crawl</div>
+    <h1>The Mystery Bar Crawl</h1>
+  </header>
+
+  <!-- STOP 1 -->
+  <div class="card" id="stop-1">
+    <div class="card-header">
+      <span class="stop-tag">Stop #1</span>
+      <span class="location-name">Chroy Changvar</span>
+    </div>
+    <p>This first bar can be found on your phone. Fill in the blank to find it on Google Maps!</p>
+    <div class="clue-box">
+      <strong>Clue:</strong> You will want to use this app when you get there!<br><br>
+      <em>“Move iPhone continuously when taking a ______________”</em>
+    </div>
+    <button class="btn btn-reveal" onclick="toggleAnswer('ans-1')">Check Answer 🔍</button>
+    <div class="answer-reveal" id="ans-1">
+      <div class="revealed-bar-name">📍 Panorama Sky Bar</div>
+      <a href="https://www.google.com/maps/place/Panorama+Sky+Bar/@11.576401,104.9251043,17z/data=!4m6!3m5!1s0x3109533a544f1779:0x8faa0c5651a45236!8m2!3d11.5894688!4d104.928556!16s%2Fg%2F11wncm_5cj?entry=ttu&g_ep=EgoyMDI2MDkyMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
+    </div>
+  </div>
+
+  <!-- STOP 2 -->
+  <div class="card" id="stop-2">
+    <div class="card-header">
+      <span class="stop-tag">Stop #2</span>
+      <span class="location-name">Daun Penh</span>
+    </div>
+    <p>Play the Connections Game to find your next destination. You can search the bar's name on Grab, but it sits on the top floor of a hotel.</p>
+    <div class="clue-box">
+      <strong>Clue:</strong> The hotel name is one of the words in the green category!
+    </div>
+    <a href="https://connections.swellgarfo.com/game/-P2S2c6-HX-PorHM6RnH" target="_blank" class="btn btn-action" style="margin-bottom: 8px;">Play Connections Game 🧩</a>
+    <button class="btn btn-reveal" onclick="toggleAnswer('ans-2')">Check Answer 🔍</button>
+    <div class="answer-reveal" id="ans-2">
+      <div class="revealed-bar-name">📍 Khmer Funk</div>
+      <a href="https://maps.app.goo.gl/aTLCzdpZiy4S1B6t6" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
+    </div>
+  </div>
+
+  <!-- STOP 3 -->
+  <div class="card" id="stop-3">
+    <div class="card-header">
+      <span class="stop-tag">Stop #3</span>
+      <span class="location-name">Riverside</span>
+    </div>
+    <p>Exit Bar #2 and head East to the river, then walk South along the walking street (approx. 20 min walk with optional stops along the way).</p>
+    <div class="clue-box">
+      <em>"It might not look like much now, but it’s poppin' on the weekends."</em>
+    </div>
+    <ul class="steps">
+      <li>Find the alley with a neon arrow pointing down it.</li>
+      <li>Go down the alley and look for a red door.</li>
+      <li>Go in the red door and head up the stairs.</li>
+    </ul>
+
+    <!-- Photo 3 Container -->
+    <div class="photo-container" onclick="openLightbox('img-stop3')">
+      <img id="img-stop3" src="photo3.jpg" alt="Alley Clue Image">
+      <div class="photo-caption">🔍 Tap to Zoom</div>
+    </div>
+
+    <button class="btn btn-reveal" onclick="toggleAnswer('ans-3')">Check Answer 🔍</button>
+    <div class="answer-reveal" id="ans-3">
+      <div class="revealed-bar-name">📍 Kravat Speakeasy</div>
+      <a href="https://maps.app.goo.gl/6yrq6HrLSXH71L716" target="_blank" class="btn btn-reveal" style="margin-bottom: 6px;">Area Clue Map 🗺️</a>
+      <a href="https://maps.app.goo.gl/fy5p6ZYEa5UHwq3YA" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
+    </div>
+  </div>
+
+  <!-- STOP 4 -->
+  <div class="card" id="stop-4">
+    <div class="card-header">
+      <span class="stop-tag">Stop #4</span>
+      <span class="location-name">Langka Lane</span>
+    </div>
+    <p>Take a Grab to Langka Lane. Look for the cluster of street signs when dropped off.</p>
+    
+    <!-- Photo 4 Container -->
+    <div class="photo-container" onclick="openLightbox('img-stop4')">
+      <img id="img-stop4" src="photo4.jpg" alt="Langka Lane Signs">
+      <div class="photo-caption">🔍 Tap to Zoom</div>
+    </div>
+
+    <div class="clue-box">
+      <strong>Riddle for Bar #4:</strong><br>
+      <em>"I am red and white, fizzy and cold.<br>
+      Open my door, and a bar will unfold."</em>
+    </div>
+    <button class="btn btn-reveal" onclick="toggleAnswer('ans-4')">Check Answer 🔍</button>
+    <div class="answer-reveal" id="ans-4">
+      <div class="revealed-bar-name">📍 Battbong Speakeasy Bar</div>
+      <a href="https://maps.app.goo.gl/nGEsS4cAYYEEdT2h7" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
+    </div>
+  </div>
+
+  <!-- STOP 5 -->
+  <div class="card" id="stop-5">
+    <div class="card-header">
+      <span class="stop-tag">Stop #5</span>
+      <span class="location-name">Bassac Lane</span>
+    </div>
+    <p>Finish your night in Phnom Penh’s biggest nightlife scene: Bassac Lane!</p>
+    <div class="clue-box">
+      <strong>Memory Check Riddle:</strong><br>
+      This final bar is <strong>1223 bar</strong>:
+      <div class="formula">
+        1 = 5th letter of Stop #1<br>
+        2 = 6th letter of Coke bar's real name<br>
+        3 = 1st letter of Stop #2 neighborhood (Rachel's neighborhood)
+      </div>
+    </div>
+    <button class="btn btn-reveal" onclick="toggleAnswer('ans-5')">Check Answer 🔍</button>
+    <div class="answer-reveal" id="ans-5">
+      <div class="revealed-bar-name">📍 Roodbar</div>
+      <a href="https://maps.app.goo.gl/B6KCk17NyGDQ98k9A" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
+    </div>
+  </div>
+
+  <!-- STOP 6 / HOME GRID -->
+  <div class="card card-home" id="stop-6">
+    <div class="card-header">
+      <span class="stop-tag home-tag">Stop #6</span>
+      <span class="location-name">Finish Line 🌙</span>
+    </div>
+    <p>Congratulations! You completed the PP Mystery Crawl.</p>
+
+    <!-- 2x2 Grid Buttons -->
+    <div class="grid-2x2">
+      <a href="https://www.google.com/maps/place/Canopy/@11.5529244,104.9293496,19.96z/data=!4m6!3m5!1s0x310951007ca84f99:0xfd3c05d4d81e2c9e!8m2!3d11.5529299!4d104.928556!16s%2Fg%2F11ldh_7nbj?entry=ttu&g_ep=EgoyMDI2MDkzMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="grid-btn">
+        <span>🌿</span> A joint
+      </a>
+      <a href="https://maps.app.goo.gl/tPvJrjZDxw75soHY6" target="_blank" class="grid-btn">
+        <span>🍟</span> Munchies
+      </a>
+      <a href="https://maps.app.goo.gl/HFsiB3hyRYTRXCmV8" target="_blank" class="grid-btn">
+        <span>🍦</span> Gelato
+      </a>
+      <button class="grid-btn" onclick="toggleGrabBox()">
+        <span>🚕</span> Home
+      </button>
+    </div>
+
+    <!-- Home / Grab Dropdown Box -->
+    <div class="grab-box" id="grab-box">
+      <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 8px;">
+        Go to either corner of Bassac Lane and call your ride!
+      </p>
+      <a href="https://app.grab.com/s/lWnJ86wJ" target="_blank" class="btn btn-grab">🚕 Call Grab Back Home</a>
+    </div>
+  </div>
+
+  <footer>
+    Made for Michelle and Chance &lt;3
+  </footer>
+
+  <!-- Lightbox Fullscreen Image View -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Zoomed Photo">
+  </div>
+
+  <script>
+    function toggleAnswer(ansId) {
+      const el = document.getElementById(ansId);
+      el.classList.toggle('open');
+    }
+
+    function toggleGrabBox() {
+      const el = document.getElementById('grab-box');
+      el.classList.toggle('open');
+    }
+
+    function openLightbox(imgId) {
+      const img = document.getElementById(imgId);
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = img.src;
+      lightbox.classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+
+    // Dynamic Scroll Tracker
+    const cards = document.querySelectorAll('.card');
+    const dots = document.querySelectorAll('.dot');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      cards.forEach((card, index) => {
+        const cardTop = card.offsetTop - 100;
+        if (window.scrollY >= cardTop) {
+          current = index;
+        }
+      });
+      dots.forEach((dot, index) => {
+        if (index === current) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
