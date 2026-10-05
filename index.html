@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phnom Penh Mystery Bar Crawl</title>
+  <title>Bougie but Broke Crawl</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -95,7 +95,7 @@
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 900;
       text-transform: uppercase;
       line-height: 1.1;
@@ -105,6 +105,7 @@
       margin-top: 4px;
     }
 
+    /* Locked Card State */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -114,6 +115,17 @@
       position: relative;
       box-shadow: 0 10px 20px rgba(0,0,0,0.3);
       scroll-margin-top: 80px;
+      display: none; /* Hidden until unlocked */
+    }
+
+    .card.unlocked {
+      display: block;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .card-home {
@@ -177,6 +189,113 @@
       position: absolute;
       left: 0;
       color: var(--accent-pink);
+    }
+
+    /* Interactive Puzzle Styling for Stop 5 */
+    .puzzle-section {
+      margin: 14px 0;
+    }
+
+    .puzzle-clue-title {
+      font-size: 0.85rem;
+      color: var(--accent-lime);
+      font-weight: 700;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    /* Single-line row styling with horizontal scroll fallback */
+    .word-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 3px;
+      margin-bottom: 8px;
+      align-items: center;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .space-gap {
+      width: 8px;
+      flex-shrink: 0;
+    }
+
+    /* Letter input box styling & states */
+    .letter-box {
+      width: 20px;
+      height: 30px;
+      flex-shrink: 0;
+      background: #0d0f12;
+      border: none;
+      border-bottom: 2px solid var(--text-muted);
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      border-radius: 2px;
+      outline: none;
+      padding: 0;
+      transition: all 0.2s ease;
+    }
+
+    .letter-box:focus {
+      background: #1a202c;
+    }
+
+    .letter-box.correct {
+      border-bottom-color: var(--accent-lime) !important;
+      color: #ffffff;
+    }
+
+    .letter-box.wrong {
+      border-bottom-color: var(--accent-pink) !important;
+      color: #ffffff;
+    }
+
+    .letter-box.square-box {
+      border: 2px solid var(--text-muted);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .letter-box.square-box.correct {
+      border-color: var(--accent-lime) !important;
+      background: rgba(0, 255, 170, 0.1);
+      color: #ffffff;
+    }
+
+    .letter-box.square-box.wrong {
+      border-color: var(--accent-pink) !important;
+      background: rgba(255, 42, 133, 0.1);
+      color: #ffffff;
+    }
+
+    .bar-key-display {
+      background: #0f1218;
+      border: 1px dashed var(--accent-pink);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    .bar-key-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .bar-key-letters {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--accent-pink);
+      letter-spacing: 6px;
+      margin-top: 4px;
     }
 
     /* 2x2 Grid for Stop 6 Options */
@@ -293,6 +412,13 @@
       border: 1px solid var(--card-border);
     }
 
+    .btn-next {
+      background: linear-gradient(135deg, var(--accent-pink) 0%, #d80062 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 42, 133, 0.4);
+      margin-top: 10px;
+    }
+
     .btn-action {
       background: var(--accent-pink);
       color: #fff;
@@ -326,17 +452,6 @@
       color: var(--accent-lime);
       font-weight: 700;
       margin-bottom: 10px;
-    }
-
-    .formula {
-      background: #161a22;
-      padding: 10px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.85rem;
-      color: var(--accent-lime);
-      margin: 8px 0;
-      text-align: left;
     }
 
     /* Lightbox Modal */
@@ -391,11 +506,11 @@
 
   <header>
     <div class="subtitle">Phnom Penh Crawl</div>
-    <h1>The Mystery Bar Crawl</h1>
+    <h1>Bougie but Broke Crawl</h1>
   </header>
 
-  <!-- STOP 1 -->
-  <div class="card" id="stop-1">
+  <!-- STOP 1 (Unlocked by default) -->
+  <div class="card unlocked" id="stop-1">
     <div class="card-header">
       <span class="stop-tag">Stop #1</span>
       <span class="location-name">Chroy Changvar</span>
@@ -410,6 +525,7 @@
       <div class="revealed-bar-name">📍 Panorama Sky Bar</div>
       <a href="https://www.google.com/maps/place/Panorama+Sky+Bar/@11.576401,104.9251043,17z/data=!4m6!3m5!1s0x3109533a544f1779:0x8faa0c5651a45236!8m2!3d11.5894688!4d104.928556!16s%2Fg%2F11wncm_5cj?entry=ttu&g_ep=EgoyMDI2MDkyMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
     </div>
+    <button class="btn btn-next" onclick="unlockNextStop('stop-2')">Next Stop ➔</button>
   </div>
 
   <!-- STOP 2 -->
@@ -428,6 +544,7 @@
       <div class="revealed-bar-name">📍 Khmer Funk</div>
       <a href="https://maps.app.goo.gl/aTLCzdpZiy4S1B6t6" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
     </div>
+    <button class="btn btn-next" onclick="unlockNextStop('stop-3')">Next Stop ➔</button>
   </div>
 
   <!-- STOP 3 -->
@@ -458,6 +575,7 @@
       <a href="https://maps.app.goo.gl/6yrq6HrLSXH71L716" target="_blank" class="btn btn-reveal" style="margin-bottom: 6px;">Area Clue Map 🗺️</a>
       <a href="https://maps.app.goo.gl/fy5p6ZYEa5UHwq3YA" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
     </div>
+    <button class="btn btn-next" onclick="unlockNextStop('stop-4')">Next Stop ➔</button>
   </div>
 
   <!-- STOP 4 -->
@@ -484,6 +602,7 @@
       <div class="revealed-bar-name">📍 Battbong Speakeasy Bar</div>
       <a href="https://maps.app.goo.gl/nGEsS4cAYYEEdT2h7" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
     </div>
+    <button class="btn btn-next" onclick="unlockNextStop('stop-5')">Next Stop ➔</button>
   </div>
 
   <!-- STOP 5 -->
@@ -493,18 +612,85 @@
       <span class="location-name">Bassac Lane</span>
     </div>
     <p>Finish your night in Phnom Penh’s biggest nightlife scene: Bassac Lane!</p>
+
     <div class="clue-box">
-      <strong>Memory Check Riddle:</strong><br>
-      This final bar is <strong>1223 bar</strong>:
-      <div class="formula">
-        1 = 5th letter of Stop #1<br>
-        2 = 6th letter of Coke bar's real name<br>
-        3 = 1st letter of Stop #2 neighborhood (Rachel's neighborhood)
+      <em>"Who did you see painted on the wall outside of Stop #4? No it's not Hitler, it's..."</em>
+    </div>
+
+    <!-- Interactive Letter Puzzle with Answer Checking -->
+    <div class="puzzle-section" id="puzzle-container">
+      <!-- Word 1: CHARLIE CHAPLIN -->
+      <div class="puzzle-clue-title">1. Silent film icon:</div>
+      <div class="word-row">
+        <input class="letter-box" data-ans="C" maxlength="1">
+        <input class="letter-box" data-ans="H" maxlength="1">
+        <input class="letter-box" data-ans="A" maxlength="1">
+        <input class="letter-box square-box" id="sq-1" data-ans="R" maxlength="1">
+        <input class="letter-box" data-ans="L" maxlength="1">
+        <input class="letter-box" data-ans="I" maxlength="1">
+        <input class="letter-box" data-ans="E" maxlength="1">
+        <div class="space-gap"></div>
+        <input class="letter-box" data-ans="C" maxlength="1">
+        <input class="letter-box" data-ans="H" maxlength="1">
+        <input class="letter-box" data-ans="A" maxlength="1">
+        <input class="letter-box" data-ans="P" maxlength="1">
+        <input class="letter-box" data-ans="L" maxlength="1">
+        <input class="letter-box" data-ans="I" maxlength="1">
+        <input class="letter-box" data-ans="N" maxlength="1">
+      </div>
+
+      <!-- Word 2: MARILYN MONROE -->
+      <div class="puzzle-clue-title">2. 50's Hollywood sex icon (born Norma Jeane Mortenson):</div>
+      <div class="word-row">
+        <input class="letter-box" data-ans="M" maxlength="1">
+        <input class="letter-box" data-ans="A" maxlength="1">
+        <input class="letter-box" data-ans="R" maxlength="1">
+        <input class="letter-box" data-ans="I" maxlength="1">
+        <input class="letter-box" data-ans="L" maxlength="1">
+        <input class="letter-box" data-ans="Y" maxlength="1">
+        <input class="letter-box" data-ans="N" maxlength="1">
+        <div class="space-gap"></div>
+        <input class="letter-box" data-ans="M" maxlength="1">
+        <input class="letter-box square-box" id="sq-2" data-ans="O" maxlength="1">
+        <input class="letter-box" data-ans="N" maxlength="1">
+        <input class="letter-box" data-ans="R" maxlength="1">
+        <input class="letter-box square-box" id="sq-3" data-ans="O" maxlength="1">
+        <input class="letter-box" data-ans="E" maxlength="1">
+      </div>
+
+      <!-- Word 3: ALEXANDER THE GREAT -->
+      <div class="puzzle-clue-title">3. Ancient Macedonian king & student of Aristotle:</div>
+      <div class="word-row">
+        <input class="letter-box" data-ans="A" maxlength="1">
+        <input class="letter-box" data-ans="L" maxlength="1">
+        <input class="letter-box" data-ans="E" maxlength="1">
+        <input class="letter-box" data-ans="X" maxlength="1">
+        <input class="letter-box" data-ans="A" maxlength="1">
+        <input class="letter-box" data-ans="N" maxlength="1">
+        <input class="letter-box square-box" id="sq-4" data-ans="D" maxlength="1">
+        <input class="letter-box" data-ans="E" maxlength="1">
+        <input class="letter-box" data-ans="R" maxlength="1">
+        <div class="space-gap"></div>
+        <input class="letter-box" data-ans="T" maxlength="1">
+        <input class="letter-box" data-ans="H" maxlength="1">
+        <input class="letter-box" data-ans="E" maxlength="1">
+        <div class="space-gap"></div>
+        <input class="letter-box" data-ans="G" maxlength="1">
+        <input class="letter-box" data-ans="R" maxlength="1">
+        <input class="letter-box" data-ans="E" maxlength="1">
+        <input class="letter-box" data-ans="A" maxlength="1">
+        <input class="letter-box" data-ans="T" maxlength="1">
+      </div>
+
+      <!-- Live Revealed Bar Name Key -->
+      <div class="bar-key-display">
+        <div class="bar-key-title">Highlighted Box Letters:</div>
+        <div class="bar-key-letters" id="key-output">_ _ _ _ BAR</div>
       </div>
     </div>
-    <button class="btn btn-reveal" onclick="toggleAnswer('ans-5')">Check Answer 🔍</button>
+
     <div class="answer-reveal" id="ans-5">
-      <div class="revealed-bar-name">📍 Roodbar</div>
+      <div class="revealed-bar-name">🎉 Solved! 📍 Roodbar</div>
       <a href="https://maps.app.goo.gl/B6KCk17NyGDQ98k9A" target="_blank" class="btn btn-action">Open Location Map 🗺️</a>
     </div>
   </div>
@@ -552,9 +738,17 @@
   </div>
 
   <script>
+    // Toggle answer reveal box
     function toggleAnswer(ansId) {
       const el = document.getElementById(ansId);
       el.classList.toggle('open');
+    }
+
+    // Unlock next stop & scroll to it
+    function unlockNextStop(stopId) {
+      const targetCard = document.getElementById(stopId);
+      targetCard.classList.add('unlocked');
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function toggleGrabBox() {
@@ -574,16 +768,89 @@
       document.getElementById('lightbox').classList.remove('active');
     }
 
+    // Setup input behaviors for Puzzle Stop #5
+    const puzzleInputs = document.querySelectorAll('#puzzle-container .letter-box');
+
+    puzzleInputs.forEach((input, index) => {
+      // Input event (typing)
+      input.addEventListener('input', (e) => {
+        const val = input.value.toUpperCase();
+        input.value = val;
+        const expected = input.getAttribute('data-ans');
+
+        if (val === "") {
+          input.classList.remove('correct', 'wrong');
+        } else if (val === expected) {
+          input.classList.add('correct');
+          input.classList.remove('wrong');
+        } else {
+          input.classList.add('wrong');
+          input.classList.remove('correct');
+        }
+
+        updateKeyLetters();
+        checkFullPuzzleSolved();
+
+        // Auto move to next input if filled
+        if (val.length >= 1 && index < puzzleInputs.length - 1) {
+          puzzleInputs[index + 1].focus();
+        }
+      });
+
+      // Backspace handler
+      input.addEventListener('keydown', (e) => {
+        if (e.key === "Backspace") {
+          if (input.value === "" && index > 0) {
+            puzzleInputs[index - 1].focus();
+            puzzleInputs[index - 1].value = "";
+            puzzleInputs[index - 1].classList.remove('correct', 'wrong');
+            updateKeyLetters();
+          } else {
+            input.value = "";
+            input.classList.remove('correct', 'wrong');
+            updateKeyLetters();
+          }
+        }
+      });
+    });
+
+    // Update the live 4-letter key bar output
+    function updateKeyLetters() {
+      const sq1 = document.getElementById('sq-1').value.toUpperCase() || '_';
+      const sq2 = document.getElementById('sq-2').value.toUpperCase() || '_';
+      const sq3 = document.getElementById('sq-3').value.toUpperCase() || '_';
+      const sq4 = document.getElementById('sq-4').value.toUpperCase() || '_';
+
+      document.getElementById('key-output').innerText = `${sq1} ${sq2} ${sq3} ${sq4} BAR`;
+    }
+
+    // Automatically unlock Stop #5 answer and Stop #6 when entire puzzle is correct
+    function checkFullPuzzleSolved() {
+      let allCorrect = true;
+      puzzleInputs.forEach(input => {
+        if (input.value.toUpperCase() !== input.getAttribute('data-ans')) {
+          allCorrect = false;
+        }
+      });
+
+      if (allCorrect) {
+        document.getElementById('ans-5').classList.add('open');
+        unlockNextStop('stop-6');
+      }
+    }
+
     // Dynamic Scroll Tracker
     const cards = document.querySelectorAll('.card');
     const dots = document.querySelectorAll('.dot');
 
     window.addEventListener('scroll', () => {
-      let current = '';
+      let current = 0;
       cards.forEach((card, index) => {
-        const cardTop = card.offsetTop - 100;
-        if (window.scrollY >= cardTop) {
-          current = index;
+        if (card.classList.contains('unlocked')) {
+          const cardTop = card.offsetTop - 100;
+          if (window.scrollY >= cardTop) {
+            current = index;
+          }
         }
       });
       dots.forEach((dot, index) => {
